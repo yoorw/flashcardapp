@@ -1,26 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Answering from './scenes/Answering';
+import {CardProvider} from './services/CardContext';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App: React.FC = () =>
+  <CardProvider>
+    <Answering/>
+  </CardProvider>;
+
+// function App() {
+//   const [cards, setCards] = useState(SAMPLE_CARDS);
+
+//   return (
+//     // <FlashcardList flashcards={cards} />
+//     <h1>Hello World! </h1>
+//   );
+// }
+
+// const SAMPLE_CARDS = [
+//   {
+//     id: 1,
+//     question: 'What is Question 1?',
+//     answer: '4',
+//     options: ['blah', 'blah', 'blah', '4']
+//   },
+//   {
+//     id: 2,
+//     question: 'What is Question 2?',
+//     answer: 'foo',
+//     options: ['blah', 'foo', 'blah', '4']
+//   },
+//   {
+//     id: 1,
+//     question: 'What is Question 3?',
+//     answer: 'bar',
+//     options: ['bar', 'blah', 'blah', '4']
+//   }
+// ];
 
 export default App;
