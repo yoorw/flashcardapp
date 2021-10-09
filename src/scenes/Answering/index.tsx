@@ -1,5 +1,6 @@
 // import React to that we can use JSX
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
+import Answer from './components/Answer';
 
 // import all the components from Semantic UI React
 import {
@@ -19,6 +20,8 @@ const Answering = () => {
   // get the question from the current card
   const {question} = cards[current];
 
+  const [showAnswer, setShowAnswer] = useState(false);
+
   return (
     <Container data-testid='container' style={{position: 'absolute', left: 200}}>
       <Header data-testid='question' content={question}/>
@@ -26,7 +29,8 @@ const Answering = () => {
       <Form>
         <TextArea data-testid='textarea'/>
       </Form>
-      <Button>Submit</Button>
+      <Button onClick={() => setShowAnswer(true)}>Submit</Button>
+      <Answer visible={showAnswer}/>
     </Container>
   )};
 
