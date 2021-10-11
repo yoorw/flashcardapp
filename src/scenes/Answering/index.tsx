@@ -1,6 +1,7 @@
 // import React to that we can use JSX
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Answer from './components/Answer';
+import Buttons from './components/Buttons';
 
 // import all the components from Semantic UI React
 import {
@@ -22,14 +23,29 @@ const Answering = () => {
 
   const [showAnswer, setShowAnswer] = useState(false);
 
+  // the value of the textarea where the user types their input 
+  const [input, setInput] = useState('');
+
+  useEffect(() => {
+    // hide the answer
+    setShowAnswer(false);
+
+    // clear the TextArea
+    setInput('');
+
+    // useEffect triggers when the value of current changes
+  }, [current, setShowAnswer, setInput]);
+
   return (
     <Container data-testid='container' style={{position: 'absolute', left: 200}}>
       <Header data-testid='question' content={question}/>
       <Button onClick={() => dispatch({type: CardActionTypes.next})}>Skip</Button>
       <Form>
-        <TextArea data-testid='textarea'/>
+        <TextArea data-testid='textarea'
+        value={input}
+        onChange={(e: any, {value}) => typeof(value) === 'string' && setInput(value)}/>
       </Form>
-      <Button onClick={() => setShowAnswer(true)}>Submit</Button>
+      <Buttons answered={showAnswer} submit={() => setShowAnswer(true)}/>
       <Answer visible={showAnswer}/>
     </Container>
   )};
