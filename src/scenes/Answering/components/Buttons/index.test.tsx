@@ -3,7 +3,8 @@ import {render, cleanup, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Buttons from './index';
 import { CardContext, CardProvider, initialState } from '../../../../services/CardContext';
-import { CardState } from '../../../../types';
+import {StatsContext, StatsProvider} from '../../../../services/StatsContext';
+import { CardState, StatsState } from '../../../../types';
 
 
 afterEach(cleanup);
@@ -116,4 +117,89 @@ it('clicking submit shows right and wrong', () => {
   expect(queryByText(/submit/i)).toBeNull();
   expect(getByText(/right/i)).toBeInTheDocument();
   expect(getByText(/wrong/i)).toBeInTheDocument();
+});
+
+// when the user clicks the skip button, the skip is recorded in the stats
+describe('clicking buttons records stats', () => {
+  // create a CardState with current set to 0
+  const cardState = {
+    ...initialState,
+    current: 0
+  };
+
+  // a blank stats object
+  const blankStats = {
+    right: 0,
+    wrong: 0,
+    skip: 0
+  };
+
+  // get the question from cards index 0
+  const {question} = cardState.cards[0];
+
+  // create statsState with stats for the question
+  const statsState: StatsState = {
+    [question]: blankStats
+  };
+
+  // helper component displays the value of skip for the question
+  const StatsDisplay = () => {
+    const stats = useContext(StatsContext);
+    const {right, wrong} = stats[question];
+    return <div>
+      <div data-testid='rightDisplay'>{right}</div>
+      <div data-testid='wrongDisplay'>{wrong}</div>
+    </div>
+  };
+
+  const renderWithDisplay = () => render(
+    <CardProvider testState={cardState}>
+      <StatsProvider testState={statsState}>
+        <Buttons answered={true} submit={jest.fn()} />
+        <StatsDisplay/>
+      </StatsProvider>
+    </CardProvider>
+  );
+
+  // clicking the right button updates stats
+  it('clicking the right button updates stats', () => {
+    // render Answering and StatsDisplay inside the providers
+    // pass the providers the cardState and StatsState values that we defined
+    const {getByTestId, getByText} = renderWithDisplay();
+
+    // find the right button
+    const rightButton = getByText(/right/i);
+
+    // find the right display
+    const rightDisplay = getByTestId('rightDisplay');
+
+    // right display should start at 0
+    expect(rightDisplay).toHaveTextContent('0');
+
+    // click the right button
+    fireEvent.click(rightButton);
+
+    expect(rightDisplay).toHaveTextContent('1');
+  });
+
+  // clicking the wrong button updates stats
+  it('clicking the wrong button updates stats', () => {
+    // render Answering and StatsDisplay inside the providers
+    // pass the providers the cardState and StatsState values that we defined
+    const {getByTestId, getByText} = renderWithDisplay();
+
+    // find the wrong button
+    const wrongButton = getByText(/wrong/i);
+
+    // find the wrong display
+    const wrongDisplay = getByTestId('wrongDisplay');
+
+    // wrong display should start at 0
+    expect(wrongDisplay).toHaveTextContent('0');
+
+    // click the wrong button
+    fireEvent.click(wrongButton);
+
+    expect(wrongDisplay).toHaveTextContent('1');
+  });
 });

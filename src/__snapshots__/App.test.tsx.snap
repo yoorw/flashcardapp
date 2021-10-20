@@ -11,6 +11,11 @@ exports[`Matches Snapshot 1`] = `
       class="ui header"
       data-testid="question"
     >
+      <i
+        aria-hidden="true"
+        class="question circle icon"
+        data-testid="icon"
+      />
       What is a linked list?
     </div>
     <button
