@@ -69,3 +69,12 @@ export type CardAction =
     type: StatsActionType,
     question: string
   };
+
+  // defines the scenes that the user can navigate to
+  export enum SceneTypes {
+    // where the user answers questions
+    answering = 'answering',
+
+    // where the user writes questions
+    writing = 'writing'
+  };

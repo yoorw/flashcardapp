@@ -17,3 +17,14 @@ it('Matches Snapshot', () => {
   const {asFragment} = render(<App/>);
   expect(asFragment()).toMatchSnapshot();
 });
+
+// shows the NavBar
+it('shows the NavBar', () => {
+  const {getByText} = render(<App/>);
+
+  // the navbar has a header with the words "Flashcard App" in it
+  const navBar = getByText(/flashcard app/i);
+
+  // if we find the header text, we know the NavBar is showing up
+  expect(navBar).toBeInTheDocument();
+});
