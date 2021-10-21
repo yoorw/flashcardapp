@@ -1,15 +1,26 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import Answering from './scenes/Answering';
 import {CardProvider} from './services/CardContext';
 import {StatsProvider} from './services/StatsContext';
+import Writing from './scenes/Writing';
+import NavBar from './components/NavBar';
+import { SceneTypes } from './types';
 
-const App: React.FC = () =>
-  <CardProvider>
+
+const App: React.FC = () => {
+  const [showScene, setShowScene] = useState(SceneTypes.answering);
+
+  return (
+    <CardProvider>
     <StatsProvider>
-      <Answering/>
+      <NavBar setShowScene={setShowScene} showScene={showScene} />
+      {showScene === SceneTypes.answering && <Answering />}
+      {showScene === SceneTypes.writing && <Writing />}
     </StatsProvider>
-  </CardProvider>;
+  </CardProvider>
+  );
+};
 
 // function App() {
 //   const [cards, setCards] = useState(SAMPLE_CARDS);
