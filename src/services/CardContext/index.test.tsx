@@ -4,7 +4,8 @@ import '@testing-library/jest-dom/extend-expect';
 import {CardContext, CardProvider, initialState, reducer} from './index';
 import { CardAction, CardActionTypes, CardState } from '../../types';
 import { executionAsyncId } from 'async_hooks';
-import { Button } from 'semantic-ui-react';
+import { Button, CardContent } from 'semantic-ui-react';
+import * as localStorage from '../Save';
 
 
 // A helper component to get cards out of CardContext
@@ -185,6 +186,72 @@ describe('CardContext reducer', () => {
 
     // it's gone
     expect(cards.findIndex(card => card.question === question)).toEqual(-1);
+  });
+});
+
+describe('saving to localStorage and loading from localStorage', () => {
+  it('when a card is added to cards, attempts to save', () => {
+    const saveCards = jest.spyOn(localStorage, 'saveCards');
+
+    const newCard = {
+      question: 'New Question',
+      subject: 'New Subject',
+      answer: 'New Answer'
+    };
+
+    const newCards = [...initialState.cards, newCard];
+
+    const SavesCard = () => {
+      const {dispatch} = useContext(CardContext);
+      return <Button content='save' onClick={() => dispatch({
+        type: CardActionTypes.save,
+        ...newCard
+      })}/>
+    };
+    
+    const {getByText} = render(
+      <CardProvider>
+        <SavesCard/>
+      </CardProvider>
+    );
+
+    expect(saveCards).toHaveBeenCalledTimes(1);
+
+    const saveCard = getByText(/save/i);
+    fireEvent.click(saveCard);
+    expect(saveCards).toHaveBeenCalledTimes(2);
+
+    expect(saveCards).toHaveBeenCalledWith(newCards);
+    saveCards.mockRestore();
+  });
+
+  it('when a card is taken out of cards, attempts to save cards', () => {
+    const saveCards = jest.spyOn(localStorage, 'saveCards');
+
+    const {current, cards} = initialState;
+    const {question} = cards[current];
+
+    const newCards = cards.filter(card => card.question !== question);
+
+    const DeletesCard = () => {
+      const {dispatch} = useContext(CardContext);
+      return <Button content='delete' onClick={() => dispatch({
+        type: CardActionTypes.delete,
+        question
+      })}/>
+    };
+
+    const {getByText} = render(
+      <CardProvider>
+        <DeletesCard/>
+      </CardProvider>
+    );
+
+    const deleteCard = getByText(/delete/i);
+    fireEvent.click(deleteCard);
+    expect(saveCards).toHaveBeenCalledTimes(2);
+
+    expect(saveCards).toHaveBeenCalledWith(newCards);
   });
 });
 

@@ -1,5 +1,6 @@
-import React, {createContext, useReducer} from 'react';
+import React, {createContext, useEffect, useReducer} from 'react';
 import { StatsAction, StatsActionType, StatsState } from "../../types";
+import {loadStats, saveStats} from '../Save';
 
 
 // Stats object - use as the basis for tracking stats for a new question
@@ -94,10 +95,16 @@ export const reducer = (state: StatsState, action: StatsAction) => {
   }
 };
 
-// object that we use to make the first Context
-export const initialState = {
+// getInitialState is a function that returns a StatsState object
+export const getInitialState = () => ({
+  // spread the return value of the loadStats function
+  ...loadStats(),
   dispatch: (action: StatsAction) => undefined
-} as StatsState;
+// tell TypeScript it is a StatsState object
+} as StatsState);
+
+// object that we use to make the first Context
+export const initialState = getInitialState();
 
 const StatsContext = createContext(initialState);
 
@@ -112,6 +119,11 @@ type StatsProviderProps = {
 
 const StatsProvider =({children, testState}: StatsProviderProps) => {
   const [state, dispatch] = useReducer(reducer, testState ? testState : initialState);
+
+  useEffect(() => {
+    saveStats(state);
+  }, [state]);
+
   const value = {...state, dispatch} as StatsState;
   return (
     <StatsContext.Provider value={value}>

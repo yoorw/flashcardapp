@@ -1,9 +1,28 @@
 import React, {useContext} from 'react';
-import {render, cleanup} from '@testing-library/react';
+import {fireEvent, render, cleanup} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import {blankStats, initialState, reducer, StatsContext, StatsProvider} from './index';
+import {Button} from 'semantic-ui-react';
 import { Stats, StatsActionType, StatsState } from '../../types';
 
+
+// instead of using 
+// import * as localStorage from '../Save'
+// able to mock using the below function
+jest.mock('../Save', () => ({
+  saveStats: jest.fn(),
+  loadStats: () => ({})
+}));
+
+// instead of using 
+// import {blankStats, initialState, reducer, StatsContext, StatsProvider} from './index';
+// bring in all the functions/variables using require
+const {
+  blankStats,
+  initialState,
+  reducer,
+  StatsContext,
+  StatsProvider
+} = require('./index');
 
 afterEach(cleanup);
 
@@ -244,5 +263,99 @@ describe('StatsProvider', () => {
         const result = getByTestId(type);
         expect(result).toHaveTextContent(expected);
       });
+  });
+});
+
+describe('saving to localStorage and loading from localStorage', () => {
+  // saves stats when stats changes
+  describe('saves stats when stats changes', () => {
+    const question = 'Is this an example question?';
+
+    const UpdateButtons = () => {
+      const {dispatch} = useContext(StatsContext);
+      const dispatchStat = (type: StatsActionType) => dispatch({type, question});
+
+      return <div>
+        <Button content='right' onClick={() => dispatchStat(StatsActionType.right)}/>
+        <Button content='wrong' onClick={() => dispatchStat(StatsActionType.wrong)}/>
+        <Button content='skip' onClick={() => dispatchStat(StatsActionType.skip)}/>
+      </div>
+    };
+
+    const eachTest = Object.values(StatsActionType)
+      .map(actionType => {
+        // an object of type StatsState
+        const result = {
+          [question]: {
+            ...blankStats,
+            [actionType]: 1
+        }};
+
+        // return an array of arguments that it.each will turn into a test
+        return [
+          actionType,
+          result
+        ];
+      });
+
+      // pass the array eachTest to it.each to run tests using arguments
+      test.each(eachTest)
+      // printing the title from it.each uses 'printf syntax'
+      ('%#: %s saves new stats',
+      // name the arguments, same order as in the array we generated
+      (
+        actionType,
+        result
+      ) => {
+        // test starts here
+        const localStorage = require('../Save');
+        const saveStats = jest.spyOn(localStorage, 'saveStats');
+        saveStats.mockClear();
+
+        const {getByText} = render(
+          <StatsProvider testState={{} as StatsState}>
+            <UpdateButtons/>
+          </StatsProvider>
+        );
+
+        expect(saveStats).toHaveBeenCalledTimes(1);
+        expect(saveStats).toHaveBeenCalledWith({});
+
+        const regex = new RegExp(actionType as StatsActionType);
+        const button = getByText(regex);
+        fireEvent.click(button);
+
+        expect(saveStats).toHaveBeenCalledTimes(2);
+        expect(saveStats).toHaveBeenCalledWith(result);
+      });
+  });
+
+  describe('load', () => {
+    // stats is empty object when it does not get stats from localStorage
+    it('gets default initialState when no stats in localStorage', () => {
+      expect(initialState).toHaveProperty('dispatch');
+      expect(Object.keys(initialState).length).toEqual(1);
+    });
+
+    // initialState contains saved stats when saved stats are returned from localStorage
+    it('loads stats from localStorage when there are stats in localStorage', () => {
+      const localStorage = require('../Save');
+      const loadStats = jest.spyOn(localStorage, 'loadStats');
+
+      loadStats.mockImplementation(() => ({
+        'Example Question': {
+          right: 1,
+          wrong: 2,
+          skip: 3
+        }
+      }));
+
+      const {getInitialState} = require('./index');
+      const initialState = getInitialState();
+
+      expect(initialState).toHaveProperty('dispatch');
+      expect(initialState).toHaveProperty('Example Question');
+      expect(Object.keys(initialState).length).toEqual(2);
+    });
   });
 });

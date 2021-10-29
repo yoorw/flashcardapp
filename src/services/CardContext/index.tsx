@@ -1,24 +1,8 @@
-import React, {createContext, useReducer} from "react";
+import React, {createContext, useEffect, useReducer} from "react";
 import {Card, CardAction, CardActionTypes, CardState} from '../../types';
+import {saveCards} from '../Save';
+import {getInitialState} from "./services";
 
-
-// card objects
-const card1: Card = {
-  question: 'What is a linked list?',
-  subject: 'Linked List',
-  answer: `A linked list is a sequential list of nodes. 
-  The nodes hold data.
-  The nodes hold pointers that point ot other nodes containing data.`
-};
-const card2: Card = {
-  question: 'What is a stack?',
-  subject: 'Stack',
-  answer: `A stack is a one ended linear data structure.
-  The stack models real world situations by having two primary operations: push and pop.
-  Push adds an element to the stack.
-  Pop pulls the top element off the stack.`
-};
-const cards = [card1, card2];
 
 // the reducer handles actions 
 export const reducer = (state: CardState, action: any) => {
@@ -136,17 +120,7 @@ export const reducer = (state: CardState, action: any) => {
 }
 
 // the object that we use to make the first Context
-export const initialState: CardState = {
-  // the deck of cards
-  cards,
-
-  // the index of the current card that components are looking at
-  current: 0,
-
-  // dispatch is a dummy method that will get overwritten with the real dispatch
-  // when we call reducer
-  dispatch: ({type}: {type:string}) => undefined,
-};
+export const initialState = getInitialState();
 
 // a context object made from initialState
 const CardContext = createContext(initialState);
@@ -161,21 +135,27 @@ type CardProviderProps = {
 };
 
 const CardProvider = ({children, testState}: CardProviderProps) => {
- // useReducer returns an array containing the state at [0]
- // and the dispatch method at [1]
- // use array destructuring to get state and dispatch
- const [state, dispatch] = useReducer(reducer, testState ? testState : initialState); 
+  // useReducer returns an array containing the state at [0]
+  // and the dispatch method at [1]
+  // use array destructuring to get state and dispatch
+  const [state, dispatch] = useReducer(reducer, testState ? testState : initialState); 
 
- // value is an object created by spreading state
- // and adding the dispatch method
- const value = {...state, dispatch};
+  // hook to trigger a function anytime cards changes
+  useEffect(() => {
+    // save cards to localStorage
+    saveCards(state.cards);
+  }, [state.cards]);
 
- return (
-   // returns a Provider with the state and dispatch that we created above
-   <CardContext.Provider value={value}>
-     {children}
-   </CardContext.Provider>
- );
+  // value is an object created by spreading state
+  // and adding the dispatch method
+  const value = {...state, dispatch};
+
+  return (
+    // returns a Provider with the state and dispatch that we created above
+    <CardContext.Provider value={value}>
+      {children}
+    </CardContext.Provider>
+  );
 }
 
 export {
