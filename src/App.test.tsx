@@ -28,3 +28,10 @@ it('shows the NavBar', () => {
   // if we find the header text, we know the NavBar is showing up
   expect(navBar).toBeInTheDocument();
 });
+
+// shows the Selector
+it('shows the Selector', () => {
+  const {getByTestId} = render(<App/>);
+  const selector = getByTestId('sidebar');
+  expect(selector).toBeInTheDocument();
+});

@@ -113,6 +113,55 @@ export const reducer = (state: CardState, action: any) => {
       };
     }
 
+    // action select
+    case 'select': {
+      const {cards} = state;
+      const {question} = action;
+
+      if(!question) return state;
+
+      const current = cards.findIndex(card => card.question === question);
+
+      if(current < 0) return state;
+
+      return {
+        ...state,
+        current
+      };
+    };
+
+    // action showAdd
+    case 'showAdd': {
+      const {subject} = action;
+      const show = [...state.show];
+
+      !show.includes(subject) && show.push(subject);
+
+      return {
+        ...state,
+        show
+      };
+    };
+
+    // action showAll
+    case 'showAll': {
+      return {
+        ...state,
+        show: []
+      };
+    };
+
+    // action showRemove
+    case 'showRemove': {
+      const {subject} = action;
+      const show = state.show.filter(subj => subj !== subject);
+
+      return {
+        ...state,
+        show
+      };
+    };
+
     // default case returns the previous state without changing it
     default: 
       return state;

@@ -187,6 +187,146 @@ describe('CardContext reducer', () => {
     // it's gone
     expect(cards.findIndex(card => card.question === question)).toEqual(-1);
   });
+
+  describe('select actions change current to the index of the card with the selected question', () => {
+    // select should set the current index to the index of the selected card
+    it('selects changes current to the index of the card with the selected question', () => {
+      const answer = 'Example Answer';
+      const question = 'Example Question';
+      const subject = 'Example Subject';
+
+      const thirdCard = {
+        answer,
+        question,
+        subject
+      };
+
+      const threeCardState = {
+        ...initialState,
+        cards: [
+          ...initialState.cards,
+          thirdCard
+        ],
+        current: 0
+      };
+
+      expect(threeCardState.cards.length).toBe(3);
+
+      const selectAction = {
+        type: CardActionTypes.select,
+        question
+      };
+
+      const {current} = reducer(threeCardState, selectAction);
+      expect(current).toEqual(2);
+    });
+
+    // if the question is not found, returns state
+    it('if no card matches the question, returns state', () => {
+      const question = 'Example Question';
+      expect(initialState.cards.findIndex(card => card.question === question)).toBe(-1);
+
+      const selectAction = {
+        type: CardActionTypes.select,
+        question
+      };
+
+      const state = reducer(initialState, selectAction);
+      expect(state).toEqual(initialState);
+    });
+  });
+
+  // actions that affect the show array
+  describe('Actions for showing subjects', () => {
+    // show add adds subjects to the array
+    describe('showAdd', () => {
+      // showAdd should add a single subject to the show array
+      it('adds the selected subject to the show array', () => {
+        expect(initialState.show).toHaveLength(0);
+
+        const subject = 'Example Subject';
+
+        const showAddAction = {
+          type: CardActionTypes.showAdd,
+          subject
+        };
+
+        const {show} = reducer(initialState, showAddAction);
+
+        expect(show).toHaveLength(1);
+        expect(show[0]).toEqual(subject);
+      });
+
+      // if the subject is already in show, the subject will not be added
+      it('if the selected subject is already in the array, the subject will not be added', () => {
+        const subject = 'Example Subject';
+
+        const showWithSubjects = [
+          subject,
+          'Another Subject'
+        ];
+
+        const showState = {
+          ...initialState,
+          show: showWithSubjects
+        };
+
+        const showAddAction = {
+          type: CardActionTypes.showAdd,
+          subject
+        };
+
+        const {show} = reducer(showState, showAddAction);
+
+        expect(show).toHaveLength(2);
+        expect(show).toContain(subject);
+      });
+    });
+
+    // showAll should clear the show array
+    it('showAll returns empty show array', () => {
+      const showWithSubjects = [
+        'Example Subject',
+        'Another Subject'
+      ];
+
+      const showState = {
+        ...initialState,
+        show: showWithSubjects
+      };
+
+      const showAllAction = {type: CardActionTypes.showAll};
+
+      const {show} = reducer(showState, showAllAction);
+
+      expect(show).toHaveLength(0);
+    });
+
+    // showRemove should remove a single subject from the show array
+    it('showRemove removes the subject from show', () => {
+      const subject = 'Example Subject';
+
+      const showWithSubjects = [
+        subject,
+        'Another Subject'
+      ];
+  
+      const showState = {
+        ...initialState,
+        show: showWithSubjects
+      };
+  
+      const showRemoveAction = {
+        type: CardActionTypes.showRemove,
+        subject
+      };
+  
+      const {show} = reducer(showState, showRemoveAction);
+  
+      expect(show).toHaveLength(1);
+      expect(show).not.toContain(subject);
+    });
+  });
 });
 
 describe('saving to localStorage and loading from localStorage', () => {

@@ -23,6 +23,35 @@ exports[`Matches Snapshot 1`] = `
     </a>
   </div>
   <div
+    class="ui vertical ui left thin visible sidebar menu"
+    data-testid="sidebar"
+    style="top: 50px;"
+  >
+    <a
+      class="item"
+    >
+      Subjects
+    </a>
+    <a
+      class="active item"
+    >
+      <i
+        aria-hidden="true"
+        class="list icon"
+      />
+      Linked List
+    </a>
+    <a
+      class="item"
+    >
+      <i
+        aria-hidden="true"
+        class="list icon"
+      />
+      Stack
+    </a>
+  </div>
+  <div
     class="ui container"
     data-testid="container"
     style="position: absolute; left: 200px;"

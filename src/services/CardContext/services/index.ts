@@ -35,5 +35,8 @@ export const getInitialState = () => ({
   current: 0,
 
   // placeholder for the dispatch function
-  dispatch: (action: CardAction) => undefined
+  dispatch: (action: CardAction) => undefined,
+
+  // the array of subjects to show the user
+  show: []
 } as CardState);
