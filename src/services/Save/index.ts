@@ -3,6 +3,7 @@ import { Card, StatsType } from "../../types";
 export const loadCards = () => {
   try {
     const stored = localStorage.getItem('cards');
+
     return stored
       ? JSON.parse(stored) as Card[]
       : undefined;

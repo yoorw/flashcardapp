@@ -1,7 +1,7 @@
 import React, {createContext, useEffect, useReducer} from "react";
 import {Card, CardAction, CardActionTypes, CardState} from '../../types';
 import {saveCards} from '../Save';
-import {getInitialState} from "./services";
+import {getInitialState, getNext} from "./services";
 
 
 // the reducer handles actions 
@@ -53,20 +53,34 @@ export const reducer = (state: CardState, action: any) => {
     // action next
     case 'next': {
       // get cards and current index from state
-      const {cards, current} = state;
+      const {cards, current, show} = state;
 
-      // total is the last valid index in cards
-      const total = cards.length-1;
+      // // total is the last valid index in cards
+      // const total = cards.length-1;
 
-      // if current+1 is bigger than total, set next = 0
-      const next = current + 1 > total ? 0 : current + 1;
+      // // if current+1 is bigger than total, set next = 0
+      // const next = current + 1 > total ? 0 : current + 1;
 
-      // create new state object and return it
-      const newState = {
+      // // create new state object and return it
+      // const newState = {
+      //   ...state,
+      //   current: next
+      // };
+
+      // return newState;
+
+
+      // call to the getNext function
+      const next = getNext({
+        cards,
+        current,
+        show
+      });
+
+      return {
         ...state,
         current: next
       };
-      return newState;
     }
 
     // action save
