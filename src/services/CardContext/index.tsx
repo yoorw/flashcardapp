@@ -1,7 +1,8 @@
 import React, {createContext, useEffect, useReducer} from "react";
+import { getAdditionCard } from "../../shared/utils";
 import {Card, CardAction, CardActionTypes, CardState} from '../../types';
 import {saveCards} from '../Save';
-import {getInitialState, getNext} from "./services";
+import {getInitialState, getNext} from './services';
 
 
 // the reducer handles actions 
@@ -68,19 +69,45 @@ export const reducer = (state: CardState, action: any) => {
       // };
 
       // return newState;
+      console.log(
+        '\n !!!>>  THIS IS ORIGINAL CardContext - next action - state: \n', state,
+        '\n !!!>>  THIS IS ORIGINAL CardContext - next action - cards: \n', cards,
+        '\n !!!>>  THIS IS ORIGINAL CardContext - next action - current: \n', current,
+        '\n !!!>>  THIS IS ORIGINAL CardContext - next action - show: \n', show,
+      )
+    
+      if(cards[current].subject === 'Math') {
+        // do math stuff
+        const nextMathCard: Card = getAdditionCard();
+        cards.push(nextMathCard);
 
+        
 
-      // call to the getNext function
-      const next = getNext({
-        cards,
-        current,
-        show
-      });
+        console.log(
+          '\n !!!>>  THIS IS NEW CardContext - next action - state: \n', state,
+          '\n !!!>>  THIS IS NEW CardContext - next action - cards: \n', cards,
+          '\n !!!>>  THIS IS NEW CardContext - next action - current: \n', current,
+          '\n !!!>>  THIS IS NEW CardContext - next action - show: \n', show,
+        )
+  
+        return {
+          ...state,
+          cards,
+          current: current+1
+        };
+      } else {
+        // call to the getNext function
+        const next = getNext({
+          cards,
+          current,
+          show
+        });
 
-      return {
-        ...state,
-        current: next
-      };
+        return {
+          ...state,
+          current: next
+        };
+      }
     }
 
     // action save
@@ -130,11 +157,22 @@ export const reducer = (state: CardState, action: any) => {
     // action select
     case 'select': {
       const {cards} = state;
-      const {question} = action;
+      const {question, subject} = action;
 
-      if(!question) return state;
+      console.log(
+        '\n !!!>>  THIS IS CardContext - SELECT action - state: \n', state,
+        '\n !!!>>  THIS IS CardContext - SELECT action - cards: \n', cards,
+        '\n !!!>>  THIS IS CardContext - SELECT action - question: \n', question,
+        '\n !!!>>  THIS IS CardContext - SELECT action - subject: \n', subject,
+      )
 
-      const current = cards.findIndex(card => card.question === question);
+      // if(!question) return state; // ORIGINAL
+      const currentQuestion = question
+        ? question
+        : cards.filter((card) => card.subject === subject)[0].question;
+
+
+      const current = cards.findIndex(card => card.question === currentQuestion);
 
       if(current < 0) return state;
 
@@ -149,7 +187,23 @@ export const reducer = (state: CardState, action: any) => {
       const {subject} = action;
       const show = [...state.show];
 
+      console.log(
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - PRE action: \n', action,
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - PRE state: \n', state,
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - PRE show: \n', show,
+      );
+
       !show.includes(subject) && show.push(subject);
+
+      // add updated show to state
+      Object.assign(state, {show});
+
+      console.log(
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - POST action: \n', action,
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - POST state: \n', state,
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - POST subject: \n', subject,
+        '\n !!!>>  THIS IS CardContext - SELECT showAdd - POST show: \n', show,
+      );
 
       return {
         ...state,
@@ -159,6 +213,11 @@ export const reducer = (state: CardState, action: any) => {
 
     // action showAll
     case 'showAll': {
+      console.log(
+        '\n !!!>>  THIS IS CardContext - SELECT showAll - action: \n', action,
+        '\n !!!>>  THIS IS CardContext - SELECT showAll - state: \n', state,
+      );
+
       return {
         ...state,
         show: []
@@ -169,6 +228,13 @@ export const reducer = (state: CardState, action: any) => {
     case 'showRemove': {
       const {subject} = action;
       const show = state.show.filter(subj => subj !== subject);
+
+      console.log(
+        '\n !!!>>  THIS IS CardContext - SELECT showRemove - action: \n', action,
+        '\n !!!>>  THIS IS CardContext - SELECT showRemove - state: \n', state,
+        '\n !!!>>  THIS IS CardContext - SELECT showRemove - subject: \n', subject,
+        '\n !!!>>  THIS IS CardContext - SELECT showRemove - show: \n', show,
+      );
 
       return {
         ...state,
@@ -184,6 +250,10 @@ export const reducer = (state: CardState, action: any) => {
 
 // the object that we use to make the first Context
 export const initialState = getInitialState();
+
+console.log(
+  '\n !!!>>  THIS IS initialState: \n', initialState
+)
 
 // a context object made from initialState
 const CardContext = createContext(initialState);

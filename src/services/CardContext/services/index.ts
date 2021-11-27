@@ -1,3 +1,4 @@
+import { getAdditionCard } from '../../../shared/utils';
 import { Card, CardAction, CardState } from '../../../types';
 import {loadCards} from '../../Save';
 
@@ -32,28 +33,42 @@ const card2: Card = {
   Push adds an element to the stack.
   Pop pulls the top element off the stack.`
 };
-export const cards = [card1, card2];
+const card3: Card = getAdditionCard();
+
+export const cards = [card1, card2, card3];
 
 // loadedCards is the result of calling loadCards
 // try to get saved cards from localStorage
 const loadedCards = loadCards();
 
+console.log(
+  '\n !!!>>  THIS IS loadedCards 1!! : \n', loadedCards
+)
+
 // a function that loads the cards from localStorage
 // and returns a CardState object
-export const getInitialState = () => ({
-  // the cards that are displayed to the user
-  // if loadedCards is undefined, use cards
-  cards: loadedCards ? shuffle(loadedCards) : cards,
+export const getInitialState = () => {
+  console.log(
+    '\n !!!>>  THIS IS loadedCards 2!! : \n', loadedCards
+  )
 
-  // index of the currently displayed card
-  current: 0,
+  return ({
 
-  // placeholder for the dispatch function
-  dispatch: (action: CardAction) => undefined,
-
-  // the array of subjects to show the user
-  show: []
-} as CardState);
+    // the cards that are displayed to the user
+    // if loadedCards is undefined, use cards
+    // cards: loadedCards ? shuffle(loadedCards) : cards,       // ORIGINAL
+    cards: cards,
+  
+    // index of the currently displayed card
+    current: 0,
+  
+    // placeholder for the dispatch function
+    dispatch: (action: CardAction) => undefined,
+  
+    // the array of subjects to show the user
+    show: []
+  } as CardState);
+};
 
 export const getNext = ({
   cards,
@@ -64,6 +79,12 @@ export const getNext = ({
   current: number,
   show: string[]
 }) => {
+  console.log(
+    '\n !!!>>  THIS IS getNext - cards: \n', cards,
+    '\n !!!>>  THIS IS getNext - current: \n', current,
+    '\n !!!>>  THIS IS getNext - show: \n', show,
+  )
+  
   // show array is empty, so we are showing all card
   if(show.length === 0) {
     const total = cards.length - 1;

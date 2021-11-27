@@ -18,14 +18,26 @@ import { CardActionTypes, StatsActionType } from '../../types';
 
 
 const Answering = () => {
+  console.log(
+    '\n !!!>>  ANSWERING - WELCOME TO THE JUNGLE!!!: \n',
+    '\n\n !!!>>> ANSWERING - THIS IS CardContext: \n', CardContext
+  )
   // get cards and current index from CardContext
   const {cards, current, dispatch} = useContext(CardContext);
   const {dispatch: statsDispatch} = useContext(StatsContext);
 
   // get the question from the current card
-  const {question} = cards[current];
+  let {question} = cards[current];
 
   const [showAnswer, setShowAnswer] = useState(false);
+
+  console.log(
+    '\n !!!>>  THIS IS Answering - showAnswer: \n', showAnswer,
+    '\n !!!>>  THIS IS Answering - setShowAnswer: \n', setShowAnswer,
+    '\n !!!>>  THIS IS Answering - cards: \n', cards,
+    '\n !!!>>  THIS IS Answering - current: \n', current,
+    '\n !!!>>  THIS IS Answering - question: \n', question,
+  )
 
   // the value of the textarea where the user types their input 
   const [input, setInput] = useState('');
@@ -40,13 +52,38 @@ const Answering = () => {
     // useEffect triggers when the value of current changes
   }, [current, setShowAnswer, setInput]);
 
+  console.log(
+    '\n !!!>>  THIS IS Answering - setInput: \n', setInput,
+    '\n !!!>>  THIS IS Answering - current: \n', current,
+  )
+
+  // // ORIGINAL
+  // return (
+  //   <Container data-testid='container' style={{position: 'absolute', left: 200}}>
+  //     <Header data-testid='question'><Stats/>{question}</Header>
+  //     <Button onClick={() => {
+  //       dispatch({type: CardActionTypes.next});
+  //       statsDispatch({type: StatsActionType.skip, question});
+  //     }}>Next or Skip</Button>
+  //     <Form>
+  //       <TextArea data-testid='textarea'
+  //       value={input}
+  //       onChange={(e: any, {value}) => typeof(value) === 'string' && setInput(value)}
+  //       />
+  //     </Form>
+  //     <Buttons answered={showAnswer} isCorrect={(theAnswer === input) ? true : false} submit={() => setShowAnswer(true)}/>
+  //     <Answer visible={showAnswer}/>
+  //   </Container>
+  // )};
+
+  // NEW
   return (
     <Container data-testid='container' style={{position: 'absolute', left: 200}}>
       <Header data-testid='question'><Stats/>{question}</Header>
       <Button onClick={() => {
         dispatch({type: CardActionTypes.next});
         statsDispatch({type: StatsActionType.skip, question});
-      }}>Skip</Button>
+      }}>Next or Skip</Button>
       <Form>
         <TextArea data-testid='textarea'
         value={input}

@@ -16,6 +16,18 @@ const Subject = ({
   // true if the subject is in the array show
   const expanded = show.includes(subject);
 
+  console.log(
+    '\n !!!>>  THIS IS SUBJECT --> DID YOU SELECT A SUBJECT ON THE SIDEBAR??? \n\n\n',
+    '\n !!!>>  THIS IS SUBJECT - cards: \n', cards,
+    '\n !!!>>  THIS IS SUBJECT - current: \n', current,
+    '\n !!!>>  THIS IS SUBJECT - show: \n', show,
+    '\n !!!>>  THIS IS SUBJECT - subject: \n', subject,
+    '\n !!!>>  THIS IS SUBJECT - currentCard: \n', currentCard,
+    '\n !!!>>  THIS IS SUBJECT - expanded: \n', expanded,
+  )
+
+  const fakeQuestion = 'FakeQuestion???';
+
   // use filter to pull only the cards that have this subject 
   const subjectCards = cards
     .filter((card) => card.subject === subject)
@@ -34,13 +46,17 @@ const Subject = ({
       />
   });
 
+  const firstQuestion = cards.filter((card) => card.subject === subject)[0].question;
+  
+
   return (
     <Fragment>
       <Menu.Item as='a'
         active={!!currentCard && currentCard.subject === subject}
-        onClick={() => expanded
-          ? dispatch({type: CardActionTypes.showRemove, subject})
-          : dispatch({type: CardActionTypes.showAdd, subject})}>
+        // onClick={() => expanded
+        //   ? dispatch({type: CardActionTypes.showRemove, subject})
+        //   : dispatch({type: CardActionTypes.showAdd, subject})}>
+        onClick={() => dispatch({type: CardActionTypes.select, subject})}>
         <Icon name='list'/>
         {subject}
       </Menu.Item>
