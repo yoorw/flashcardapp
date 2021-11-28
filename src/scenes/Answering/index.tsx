@@ -42,6 +42,12 @@ const Answering = () => {
   // the value of the textarea where the user types their input 
   const [input, setInput] = useState('');
 
+  // compare if input is correct or not
+  const inputResult: StatsActionType = input === cards[current].answer
+    ? StatsActionType.right
+    : StatsActionType.wrong;
+
+
   useEffect(() => {
     // hide the answer
     setShowAnswer(false);
@@ -55,6 +61,8 @@ const Answering = () => {
   console.log(
     '\n !!!>>  THIS IS Answering - setInput: \n', setInput,
     '\n !!!>>  THIS IS Answering - current: \n', current,
+    '\n !!!>>  THIS IS Answering - input: \n', input,
+    '\n !!!>>  THIS IS Answering - inputResult: \n', inputResult,
   )
 
   // // ORIGINAL
@@ -90,6 +98,11 @@ const Answering = () => {
         onChange={(e: any, {value}) => typeof(value) === 'string' && setInput(value)}/>
       </Form>
       <Buttons answered={showAnswer} submit={() => setShowAnswer(true)}/>
+      <Button content='Submit Answer' 
+        onClick={() => {
+          statsDispatch({type: inputResult, question})
+          dispatch({type: CardActionTypes.next})
+        }}/>
       <Answer visible={showAnswer}/>
     </Container>
   )};
