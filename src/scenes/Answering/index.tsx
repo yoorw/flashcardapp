@@ -12,6 +12,7 @@ import {
 import Answer from './components/Answer';
 import Buttons from './components/Buttons';
 import Stats from './components/Stats';
+import TrueStats from './components/TrueStats';
 import { CardContext } from '../../services/CardContext';
 import {StatsContext} from '../../services/StatsContext';
 import { CardActionTypes, StatsActionType } from '../../types';
@@ -46,6 +47,8 @@ const Answering = () => {
   const inputResult: StatsActionType = input === cards[current].answer
     ? StatsActionType.right
     : StatsActionType.wrong;
+
+  
 
 
   useEffect(() => {
@@ -104,6 +107,7 @@ const Answering = () => {
           dispatch({type: CardActionTypes.next})
         }}/>
       <Answer visible={showAnswer}/>
+      <TrueStats/>
     </Container>
   )};
 
