@@ -1,4 +1,5 @@
 import { Card } from "../../../types";
+import {cards  as originalCards} from './index';
 
 // this command will reset the mock values in between tests
 beforeEach(() => jest.resetModules());
@@ -26,15 +27,39 @@ it('gets default initialState when no cards in localStorgage', () => {
   expect(initialState.cards).toEqual(cards);
 });
 
-// initialState contains saved cards when saved cards returned from localStorage
+// initialState returns initial cards created
 it('returns stored cards', () => {
-  const mockCards = ['stored card', 'another stored card'];
+  const mockMathCard: Card = {
+    answer: 'fakeMathAnswer',
+    question: 'fakeMathQuestion',
+    subject: 'Math'
+  };
 
-  // See how we have a different return value?
-  jest.mock('../../Save', () => ({
-    loadCards: () => mockCards
+  // mock getAdditionCard
+  jest.mock('../../../shared/utils.ts', () => ({
+    getAdditionCard: () => mockMathCard
   }));
 
+  const mockCards: Card[] = [
+    {
+      question: 'What is a linked list?',
+      subject: 'Linked List',
+      answer: `A linked list is a sequential list of nodes. 
+  The nodes hold data.
+  The nodes hold pointers that point ot other nodes containing data.`
+    },
+    {
+      question: 'What is a stack?',
+      subject: 'Stack',
+      answer: `A stack is a one ended linear data structure.
+  The stack models real world situations by having two primary operations: push and pop.
+  Push adds an element to the stack.
+  Pop pulls the top element off the stack.`
+      },
+      mockMathCard
+  ];
+
+  
   const {getInitialState} = require('./index');
   const initialState = getInitialState();
 

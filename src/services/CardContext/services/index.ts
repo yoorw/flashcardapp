@@ -41,16 +41,9 @@ export const cards = [card1, card2, card3];
 // try to get saved cards from localStorage
 const loadedCards = loadCards();
 
-console.log(
-  '\n !!!>>  THIS IS loadedCards 1!! : \n', loadedCards
-)
-
 // a function that loads the cards from localStorage
 // and returns a CardState object
 export const getInitialState = () => {
-  console.log(
-    '\n !!!>>  THIS IS loadedCards 2!! : \n', loadedCards
-  )
 
   return ({
 
@@ -79,12 +72,6 @@ export const getNext = ({
   current: number,
   show: string[]
 }) => {
-  console.log(
-    '\n !!!>>  THIS IS getNext - cards: \n', cards,
-    '\n !!!>>  THIS IS getNext - current: \n', current,
-    '\n !!!>>  THIS IS getNext - show: \n', show,
-  )
-  
   // show array is empty, so we are showing all card
   if(show.length === 0) {
     const total = cards.length - 1;
