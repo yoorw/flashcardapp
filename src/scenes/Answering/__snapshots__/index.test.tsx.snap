@@ -36,11 +36,6 @@ exports[`Matches Snapshot 1`] = `
     >
       Submit
     </button>
-    <button
-      class="ui button"
-    >
-      Submit Answer
-    </button>
     <h3
       class="ui header"
       data-testid="truestats"

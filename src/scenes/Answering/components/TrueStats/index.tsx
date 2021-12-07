@@ -17,37 +17,18 @@ export const TrueStats = () => {
   // this is the entire stats context
   const allStatsState = useContext(StatsContext);
 
-  console.log(
-    '\n !!!>>  TrueStats allStats -  \n', allStatsState,
-    '\n !!!>>  TrueStats allStats 1 -  \n', allStatsState[0],
-    '\n !!!>>  TrueStats allStats Length -  \n', Object.keys(allStatsState).length,
-    '\n !!!>>  TrueStats allStats mapped -  \n', Object.keys(allStatsState).map((stat) => stat),
-  )
-
   let total: number = 0;
   let totalRight: number = 0;
   let totalWrong: number = 0;
   let totalSkip: number = 0;
 
   for(const statsState in allStatsState) {
-    console.log('\n\n THIS IS statsState - \n', statsState)
     if(statsState !== 'dispatch') {
       total++;
       const stats = allStatsState[statsState];
-      console.log('\n\n THIS IS stats - \n', stats)
       totalRight += stats.right;
       totalWrong += stats.wrong;
       totalSkip += stats.skip;
-      console.log(
-        '\n\n THIS IS totalRight - \n', totalRight,
-        '\n\n THIS IS type of totalRight  - \n', typeof totalRight,
-        '\n\n THIS IS type of stats.right  - \n', typeof stats.right,
-        '\n\n THIS IS type of totalRight Added  - \n', totalRight + stats.right,
-        '\n\n THIS IS totalWrong - \n', totalWrong,
-        '\n\n THIS IS totalWrong - \n', totalWrong,
-        '\n\n THIS IS totalSkip - \n', totalSkip,
-
-      )
     }
   };
 
