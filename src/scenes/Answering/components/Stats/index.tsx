@@ -1,6 +1,5 @@
-import { statSync } from 'fs';
 import React, {useContext} from 'react';
-import {CardContent, Icon, Popup} from 'semantic-ui-react';
+import {Icon, Popup} from 'semantic-ui-react';
 import { CardContext } from '../../../../services/CardContext';
 import { StatsContext } from '../../../../services/StatsContext';
 

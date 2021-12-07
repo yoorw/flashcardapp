@@ -1,19 +1,9 @@
-import Reaact, {useContext} from 'react';
+import {useContext} from 'react';
 import {Header} from 'semantic-ui-react';
-import { CardContext } from "../../../../services/CardContext";
 import { StatsContext } from '../../../../services/StatsContext';
-import { StatsActionType, StatsType } from "../../../../types";
 
-const blankTrueStats = {
-  right: 0,
-  skip: 0,
-  wrong: 0
-};
 
 export const TrueStats = () => {
-  // get cards and current index from CardContext
-  const {cards, current} = useContext(CardContext);
-
   // this is the entire stats context
   const allStatsState = useContext(StatsContext);
 

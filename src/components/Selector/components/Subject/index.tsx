@@ -16,8 +16,6 @@ const Subject = ({
   // true if the subject is in the array show
   const expanded = show.includes(subject);
 
-  const fakeQuestion = 'FakeQuestion???';
-
   // use filter to pull only the cards that have this subject 
   const subjectCards = cards
     .filter((card) => card.subject === subject)
@@ -35,9 +33,6 @@ const Subject = ({
       onClick={() => dispatch({type: CardActionTypes.select, question})}
       />
   });
-
-  const firstQuestion = cards.filter((card) => card.subject === subject)[0].question;
-  
 
   return (
     <Fragment>

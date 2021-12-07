@@ -10,7 +10,6 @@ import {
 } from 'semantic-ui-react';
 
 import Answer from './components/Answer';
-import Buttons from './components/Buttons';
 import Stats from './components/Stats';
 import TrueStats from './components/TrueStats';
 import { CardContext } from '../../services/CardContext';

@@ -1,21 +1,6 @@
 import { getAdditionCard } from '../../../shared/utils';
 import { Card, CardAction, CardState } from '../../../types';
-import {loadCards} from '../../Save';
 
-
-// shuffle function as explained in
-// https://medium.com/@nitinpatel_20236/how-to-shuffle-correctly-shuffle-an-array-in-javascript-15ea3f84bfb
-const shuffle = (array: any[]) => {
-  if(array.length > 0) {
-    for(let i: number = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * i);
-      const temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    };
-  }
-  return array;
-};
 
 // card objects
 const card1: Card = {
@@ -36,10 +21,6 @@ const card2: Card = {
 const card3: Card = getAdditionCard();
 
 export const cards = [card1, card2, card3];
-
-// loadedCards is the result of calling loadCards
-// try to get saved cards from localStorage
-const loadedCards = loadCards();
 
 // a function that loads the cards from localStorage
 // and returns a CardState object

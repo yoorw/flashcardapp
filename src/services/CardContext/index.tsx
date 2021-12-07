@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useReducer} from "react";
 import { getAdditionCard } from "../../shared/utils";
-import {Card, CardAction, CardActionTypes, CardState} from '../../types';
+import {Card, CardState} from '../../types';
 import {saveCards} from '../Save';
 import {getInitialState, getNext} from './services';
 
@@ -113,11 +113,6 @@ export const reducer = (state: CardState, action: any) => {
         newCards.push(card);
       }
 
-      const testResult = {
-        ...state,
-        cards: newCards
-      };
-
       // return new context
       return {
         ...state,
@@ -161,12 +156,12 @@ export const reducer = (state: CardState, action: any) => {
     };
 
     // action showAll
-    case 'showAll': {
+    case 'showAll': 
       return {
         ...state,
         show: []
       };
-    };
+    ;
 
     // action showRemove
     case 'showRemove': {
