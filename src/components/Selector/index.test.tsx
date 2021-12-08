@@ -155,86 +155,9 @@ describe('when there are cards, the sidebar has a menu item for each subject', (
   });
 });
 
-// a menu item appears for each subject in the array cards in CardContext
-// clicking on a menu item for a subject selects that subject
-it('clicking a subject item selects that subject', () => {
-  const {cards} = initialState;
-  expect(cards).toHaveLength(2);
-
-  const first = cards[0];
-  const second = cards[1];
-  expect(first.subject).toBeTruthy();
-  expect(second.subject).toBeTruthy();
-  expect(first.subject).not.toEqual(second.subject);
-
-  const {getByText, getByTestId} = renderSelector(initialState, <DisplaysCurrent />);
-
-  const show = getByTestId('show');
-  expect(show.children).toHaveLength(0);
-
-  const firstSubject = getByText(first.subject);
-  fireEvent.click(firstSubject);
-
-  expect(show.children).toHaveLength(1);
-  expect(show.children[0]).toHaveTextContent(first.subject.toString());
-
-  const secondSubject = getByText(second.subject);
-  fireEvent.click(secondSubject);
-
-  expect(show.children).toHaveLength(2);
-  expect(show.children[1]).toHaveTextContent(second.subject.toString());
-});
-
-// clicking on a menu item for a subject expands that subject and shows a menu item with the question for each card in that subject
-describe('When a subject is clicked it expands, shows menu item for each card', () => {
-  // getCard returns a card object
-  // the subject is always the same
-  const getCard = (number: number) => ({
-    question: `${number}?`,
-    answer: `${number}!`,
-    subject: 'subject'
-  });
-
-  // array 1, 2, 3 will get treated as [[1], [2], [3]] by test.each
-  const numberOfCards = [1, 2, 3];
-
-  // when clicked it should expand to show a menu item for each question in the subject
-  // 1-3 cards show correct number of card menu items
-  test.each(numberOfCards)
-  // printing the title uses 'printf syntax'. numbers are %d, not %n
-  ('%d different cards display correct number of card menu items', 
-  // name the arguments, same order as in the array we generated
-  (number) => {
-    // generate array of cards
-    const cards: Card[] = [];
-
-    for(let i=1; i<=number; i++) {
-      cards.push(getCard(i));
-    };
-
-    // create state with cards with subjects
-    const subjectState = {
-      ...initialState,
-      cards
-    };
-
-    // render selector with the state with the subjects
-    const {getAllByText, getByText} = renderSelector(subjectState);
-    const subject = getByText('subject');
-    fireEvent.click(subject);
-
-    const questions = getAllByText(/\?/);
-    expect(questions).toHaveLength(number);
-
-    for(let i=1; i<=number; i++) {
-      const numberItem = getByText(`${i.toString()}?`);
-      expect(numberItem).toBeInTheDocument();
-    };
-  });
-});
-
-// clicking on a menu item for a card question selects that card
+// clicking on a menu item for a card question selects the first question in that subject
 it('clicking on a question selects the card for that question', () => {
+
   const {question, subject} = initialState.cards[1];
   const showState = {
     ...initialState,

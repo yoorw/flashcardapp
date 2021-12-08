@@ -48,6 +48,15 @@ exports[`Matches Snapshot 1`] = `
         aria-hidden="true"
         class="list icon"
       />
+      Math
+    </a>
+    <a
+      class="item"
+    >
+      <i
+        aria-hidden="true"
+        class="list icon"
+      />
       Stack
     </a>
   </div>
@@ -70,7 +79,7 @@ exports[`Matches Snapshot 1`] = `
     <button
       class="ui button"
     >
-      Skip
+      Next or Skip
     </button>
     <form
       class="ui form"
@@ -85,6 +94,25 @@ exports[`Matches Snapshot 1`] = `
     >
       Submit
     </button>
+    <h3
+      class="ui header"
+      data-testid="truestats"
+    >
+      <div>
+        <div>
+           Total Questions: 0
+        </div>
+        <div>
+           Questions Right: 0
+        </div>
+        <div>
+           Questions Wrong: 0
+        </div>
+        <div>
+           Questions Skipped: 0
+        </div>
+      </div>
+    </h3>
   </div>
 </DocumentFragment>
 `;

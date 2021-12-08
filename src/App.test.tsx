@@ -8,7 +8,7 @@ afterEach(cleanup);
 // shows the Answering scene
 it('shows the Answering component', () => {
   const {getByText} = render(<App/>);
-  const skip = getByText(/skip/i);
+  const skip = getByText(/next or skip/i);
   expect(skip).toBeInTheDocument();
 });
 

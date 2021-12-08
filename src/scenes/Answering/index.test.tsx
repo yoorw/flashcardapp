@@ -71,7 +71,7 @@ it('has a button to skip the card', () => {
   const {getByText} = render(<Answering/>);
 
   // find Skip button by searching for string 'Skip'
-  const skip = getByText('Skip');
+  const skip = getByText('Next or Skip');
 
   // assert that Skip button is in the document
   expect(skip).toBeInTheDocument();
@@ -106,7 +106,7 @@ it('clicks the skip button and the next question appears', () => {
   // current starts out at 0, so question should be cards[0]
   expect(question).toHaveTextContent(initialState.cards[0].question);
 
-  const skip = getByText(/skip/i);
+  const skip = getByText(/next or skip/i);
   // this should change current index from 0 to 1
   fireEvent.click(skip);
 
@@ -125,7 +125,7 @@ it('clears the answer when card changes', () => {
   expect(textarea).toHaveTextContent(placeholder);
 
   // get the skip button
-  const skip = getByText(/skip/i);
+  const skip = getByText(/next or skip/i);
   // click skip, this dispatches a 'next' action to cardcontext
   // which should change the value of current
   // and trigger useEffect hook to clear the textarea
@@ -183,7 +183,7 @@ it('clicking skip records stats', () => {
   );
 
   // find the skip button
-  const skipButton = getByText(/skip/i);
+  const skipButton = getByText(/next or skip/i);
 
   // find the skip display
   const skipDisplay = getByTestId('skipDisplay');
@@ -228,109 +228,25 @@ describe('submit button controls display of the answer', () => {
     expect(answer).toBeNull();
   });
 
-  // clicking the submit button makes the answer show up
-  it('clicks the submit button and shows the answer', () => {
-    const {getByText} = renderAnswering();
+  // clicking submit button skips to the next question 
+  it('clicks the skip button and the next question appears', () => {
+    // create a CardState with current set to 0
+    const zeroState = {
+      ...initialState,
+      current: 0
+    };
 
-    // find the submit button
+    // current starts at 0
+    const {getByTestId, getByText} = renderAnswering(zeroState);
+
+    const question = getByTestId('question');
+    // current starts out at 0, so question should be cards[0]
+    expect(question).toHaveTextContent(initialState.cards[0].question);
+
     const submit = getByText(/submit/i);
-    // simulating a click on the submit button
+    // this should change current index from 0 to 1
     fireEvent.click(submit);
 
-    // use a custom function to find the answer
-    // the function returns true if content is equal to the initial answer withoutLineBreaks
-    const answer = getByText(compareToInitialAnswer);
-
-    // assertion
-    expect(answer).toBeInTheDocument();
-  });
-
-  // answer goes away
-  it('answer disappears when card changes', async () => {
-    const {getByText, queryByText} = renderAnswering();
-
-    // find the submit button
-    const submit = getByText(/submit/i);
-    // simulating a click on the submit button
-    fireEvent.click(submit);
-
-    // use a custom function to find the answer
-    const answer = getByText(compareToInitialAnswer);
-
-    // assertion
-    expect(answer).toBeInTheDocument();
-
-    // clicking skip changes the current index
-    const skip = getByText(/skip/i);
-    fireEvent.click(skip);
-
-    // the answer to the second question
-    const secondAnswer = initialState.cards[initialState.current + 1].answer;
-
-    // remove lineBreaks from initialAnswer for comparison to textContent of elements
-    const withoutLineBreaks = secondAnswer.replace(/\s{2,}/g, " ");
-
-    // function that compares a string to the second answer
-    const compareToSecondAnswer = (
-      content: string,
-      {textContent} : HTMLElement
-    ) => !!textContent &&
-      textContent
-      .replace(/\s{2,}/g, " ")
-      .slice(6, textContent.length) === withoutLineBreaks;
-
-    // look for the first answer
-    const gone = queryByText(compareToInitialAnswer);
-    // first answer shouldn't show up
-    expect(gone).toBeNull();
-
-    // second answer should go away
-    await waitForElementToBeRemoved(() => queryByText(compareToSecondAnswer));
-    // // look for the second answer
-    // const answer2 = queryByText(compareToSecondAnswer);
-    // // second answer shouldn't show up 
-    // expect(answer2).toBeNull();
-  });
-});
-
-describe('clicking the Submit Button makes the Right and Wrong Buttons show up', () => {
-  // the Right button does not show up before Submit is clicked
-  it('the Right button does not show up before Submit is clicked', () => {
-    const {queryByText} = renderAnswering();
-    const right = queryByText(/right/i);
-    expect(right).toBeNull();
-  });
-
-  // the Wrong button does not show up before Submit is clicked
-  it('the Wrong button does not show up before Submit is clicked', () => {
-    const {queryByText} = renderAnswering();
-    const wrong = queryByText(/wrong/i);
-    expect(wrong).toBeNull();
-  });
-
-  // Clicking Submit makes the Right Button show up
-  it('clicks the submit button and shows the Right button', () => {
-    const {getByText} = renderAnswering();
-
-    // find the submit button
-    const submit = getByText(/submit/i);
-    // simulating a click on the submit button
-    fireEvent.click(submit);
-
-    const right = getByText(/right/i);
-    expect(right).toBeInTheDocument();
-  });
-
-  // Clicking Submit makes the Wrong Button show up 
-  it('clicks the submit button and shows the Wrong button', ()  => {
-    const {getByText} = renderAnswering();
-
-    // find the submit button
-    const submit = getByText(/submit/i);
-    // simulating a click on the submit button
-    fireEvent.click(submit);
-
-    const wrong = getByText(/wrong/i);
-    expect(wrong).toBeInTheDocument();
+    expect(question).toHaveTextContent(initialState.cards[1].question);
   });
 });

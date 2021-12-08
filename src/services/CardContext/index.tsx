@@ -1,7 +1,8 @@
 import React, {createContext, useEffect, useReducer} from "react";
-import {Card, CardAction, CardActionTypes, CardState} from '../../types';
+import { getAdditionCard } from "../../shared/utils";
+import {Card, CardState} from '../../types';
 import {saveCards} from '../Save';
-import {getInitialState, getNext} from "./services";
+import {getInitialState, getNext} from './services';
 
 
 // the reducer handles actions 
@@ -55,32 +56,29 @@ export const reducer = (state: CardState, action: any) => {
       // get cards and current index from state
       const {cards, current, show} = state;
 
-      // // total is the last valid index in cards
-      // const total = cards.length-1;
+      if(cards[current].subject === 'Math') {
+        // do math stuff
+        const nextMathCard: Card = getAdditionCard();
+        cards.push(nextMathCard);
+  
+        return {
+          ...state,
+          cards,
+          current: current+1
+        };
+      } else {
+        // call to the getNext function
+        const next = getNext({
+          cards,
+          current,
+          show
+        });
 
-      // // if current+1 is bigger than total, set next = 0
-      // const next = current + 1 > total ? 0 : current + 1;
-
-      // // create new state object and return it
-      // const newState = {
-      //   ...state,
-      //   current: next
-      // };
-
-      // return newState;
-
-
-      // call to the getNext function
-      const next = getNext({
-        cards,
-        current,
-        show
-      });
-
-      return {
-        ...state,
-        current: next
-      };
+        return {
+          ...state,
+          current: next
+        };
+      }
     }
 
     // action save
@@ -115,11 +113,6 @@ export const reducer = (state: CardState, action: any) => {
         newCards.push(card);
       }
 
-      const testResult = {
-        ...state,
-        cards: newCards
-      };
-
       // return new context
       return {
         ...state,
@@ -130,11 +123,13 @@ export const reducer = (state: CardState, action: any) => {
     // action select
     case 'select': {
       const {cards} = state;
-      const {question} = action;
+      const {question, subject} = action;
 
-      if(!question) return state;
+      const currentQuestion = question
+        ? question
+        : cards.filter((card) => card.subject === subject)[0].question;
 
-      const current = cards.findIndex(card => card.question === question);
+      const current = cards.findIndex(card => card.question === currentQuestion);
 
       if(current < 0) return state;
 
@@ -151,6 +146,9 @@ export const reducer = (state: CardState, action: any) => {
 
       !show.includes(subject) && show.push(subject);
 
+      // add updated show to state
+      Object.assign(state, {show});
+
       return {
         ...state,
         show
@@ -158,12 +156,12 @@ export const reducer = (state: CardState, action: any) => {
     };
 
     // action showAll
-    case 'showAll': {
+    case 'showAll': 
       return {
         ...state,
         show: []
       };
-    };
+    ;
 
     // action showRemove
     case 'showRemove': {

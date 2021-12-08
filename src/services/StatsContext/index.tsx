@@ -1,5 +1,5 @@
 import React, {createContext, useEffect, useReducer} from 'react';
-import { StatsAction, StatsActionType, StatsState } from "../../types";
+import { StatsAction, StatsState } from "../../types";
 import {loadStats, saveStats} from '../Save';
 
 

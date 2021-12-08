@@ -38,9 +38,7 @@ const Subject = ({
     <Fragment>
       <Menu.Item as='a'
         active={!!currentCard && currentCard.subject === subject}
-        onClick={() => expanded
-          ? dispatch({type: CardActionTypes.showRemove, subject})
-          : dispatch({type: CardActionTypes.showAdd, subject})}>
+        onClick={() => dispatch({type: CardActionTypes.select, subject})}>
         <Icon name='list'/>
         {subject}
       </Menu.Item>
