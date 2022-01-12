@@ -15,12 +15,21 @@ import TrueStats from './components/TrueStats';
 import { CardContext } from '../../services/CardContext';
 import {StatsContext} from '../../services/StatsContext';
 import { CardActionTypes, StatsActionType } from '../../types';
+import { isCardFirstInSubject } from '../../shared/utils';
 
 
 const Answering = () => {
   // get cards and current index from CardContext
-  const {cards, current, dispatch} = useContext(CardContext);
+  const {cards, current, dispatch, show} = useContext(CardContext);
   const {dispatch: statsDispatch} = useContext(StatsContext);
+
+  
+  // determine if Back button should be disabled
+  const backDisabled: boolean = isCardFirstInSubject(cards, current, show);
+
+  // TODO: !!! MOVE THIS FUNCTION - isCardFirstInSubject - to the disabled property of the back button below.
+  // Then figure out how to get CardContext show property as an input to figure out if cards
+  // from selected Subject should show or not 
 
   // get the question from the current card
   let {question} = cards[current];
@@ -49,6 +58,11 @@ const Answering = () => {
   return (
     <Container data-testid='container' style={{position: 'absolute', left: 200}}>
       <Header data-testid='question'><Stats/>{question}</Header>
+      <Button 
+      disabled={backDisabled} 
+      onClick={() => {
+        dispatch({type: CardActionTypes.back});
+      }}>Go Back</Button>
       <Button onClick={() => {
         dispatch({type: CardActionTypes.next});
         statsDispatch({type: StatsActionType.skip, question});

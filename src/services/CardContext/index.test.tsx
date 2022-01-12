@@ -27,6 +27,7 @@ const CardConsumer = () => {
     <div data-testid='answer'>{answer}</div>
     <div data-testid='subject'>{subject}</div>
     <Button onClick={() => dispatch({type: CardActionTypes.next})}>Next</Button>
+    <Button onClick={() => dispatch({type: CardActionTypes.back})}>Back</Button>
   </div>
 };
 
@@ -61,11 +62,6 @@ describe('CardContext reducer', () => {
         ...initialState,
         current: 1
       };
-
-      console.log(
-        '\n\n\n !!!! >>>>  CardContext unit test - initialState: \n', initialState,
-        '\n\n\n !!!! >>>>  CardContext unit test - firstState: \n', firstState,
-      )
 
       // pass firstSTate and backAction to the reducer
       expect(reducer(firstState, backAction).current).toEqual(0);
@@ -521,6 +517,13 @@ describe('CardConsumer', () => {
     show: ['Stack']
   };
 
+  // create CardState with current = 1
+  const firstState = {
+    ...initialState,
+    current: 1,
+    show: []
+  };
+
   afterEach(cleanup);
 
   // dispatching next action from component increments value of current
@@ -540,18 +543,21 @@ describe('CardConsumer', () => {
     expect(currentDiv).toHaveTextContent('1');
   });
 
-  it('should be disabled when current === 0', () => {
-    const {getByTestId, getByText} = renderProvider(zeroState);
+  // dispatching back action from component decrements value of current
+  it('dispatching back action from component decrements value of current', () => {
+    const {getByTestId, getByText} = renderProvider(firstState);
 
-    // get currentDiv with testId
+    // get currentDiv with tesetId
     const currentDiv = getByTestId(/current/i);
-    // testContent should be 0
-    expect(currentDiv).toHaveTextContent('0');
+    // testContent should be 1
+    expect(currentDiv).toHaveTextContent('1');
 
     // get backButton by text - users find buttons with text
     const backButton = getByText(/back/i);
-    
-    expect(backButton.closest('button')).toBeDisabled();
+    // click the back button
+    fireEvent.click(backButton);
+
+    expect(currentDiv).toHaveTextContent('0');
   });
 });
 

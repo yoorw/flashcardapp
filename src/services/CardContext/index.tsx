@@ -2,7 +2,7 @@ import React, {createContext, useEffect, useReducer} from "react";
 import { getAdditionCard } from "../../shared/utils";
 import {Card, CardState} from '../../types';
 import {saveCards} from '../Save';
-import {getInitialState, getNext} from './services';
+import {getInitialState, getNext, getPrevious} from './services';
 
 
 // the reducer handles actions 
@@ -11,6 +11,24 @@ export const reducer = (state: CardState, action: any) => {
   // if there is a case that matches the type it will run that code 
   // otherwise it will run the default case
   switch(action.type) {
+    // action back
+    case 'back': {
+      // get cards and current index from state
+      const {cards, current, show} = state;
+
+      // call to the getPrevious function
+      const previous = getPrevious({
+        cards,
+        current,
+        show
+      });
+
+      return {
+        ...state,
+        current: previous
+      };
+    }
+
     // action delete
     case 'delete': {
       let {cards, current} = state;

@@ -82,3 +82,39 @@ export const getNext = ({
     return next;
   }
 };
+
+export const getPrevious = ({
+  cards,
+  current,
+  show
+}: {
+  cards: Card[],
+  current: number,
+  show: string[]
+}) => {
+  // show array is empty, so we are showing all cards
+  if(show.length === 0) {
+    // decrease current by 1, unless decrementing results in negative
+    const previous = current - 1 >= 0
+      ? current - 1
+      : 0;
+
+    return previous;
+  } else {
+    // filter cards. only keep cards with a subject that's in show
+    const showCards = cards.filter((card) => show.includes(card.subject));
+
+    // get the index of the current card in the showCards array
+    const showCurrent = showCards.findIndex((card) => card.question === cards[current].question);
+
+    // get previous index in showCards array
+    const showPrevious = showCurrent - 1 >= 0
+      ? showCurrent - 1
+      : 0;
+
+    // translate the showPrevious index to the index of the same card in cards
+    const previous = cards.findIndex((card) => card.question === showCards[showPrevious].question);
+
+    return previous;
+  }
+};

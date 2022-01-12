@@ -5,7 +5,7 @@ import React, {useContext} from 'react';
 // testing library gives us methods to test components 
 // we use render to look at React components
 // we use cleanup to clear out memory after tests 
-import { render, cleanup, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, cleanup, fireEvent} from '@testing-library/react';
 
 // extend-expect gives us methods that let us say what 
 // we think a component will look like when we test it
@@ -63,6 +63,38 @@ it('has the question prompt from the current card', () => {
 
   // question content should be the question from the current card
   expect(question).toHaveTextContent(currentQuestion);
+});
+
+// Back Button
+describe('Back button', () => {
+  afterEach(cleanup);
+
+  // test to see if the Back button is in the document
+  it('has a button to go to the previous card', () => {
+    // Use Object Destructuring to get getByText from the result of the render
+    const {getByText} = render(<Answering/>);
+
+    // find Back button by search for string 'Go Back'
+    const back = getByText('Go Back');
+
+    // assert Back button is in the document
+    expect(back).toBeInTheDocument();
+  });
+
+  it('Back button should be disabled when current === 0', () => {
+    // create a new CardState with current === 0
+    const zeroState = {
+      ...initialState,
+      current: 0
+    };
+
+    const {getByTestId, getByText} = renderAnswering(zeroState);
+
+    // get backButton by text - users find buttons with text
+    const backButton = getByText(/back/i);
+    
+    expect(backButton.closest('button')).toBeDisabled();
+  });
 });
 
 // test to see if the Skip button is in the document
