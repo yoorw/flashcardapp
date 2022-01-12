@@ -155,10 +155,10 @@ describe('when there are cards, the sidebar has a menu item for each subject', (
   });
 });
 
-// clicking on a menu item for a card question selects the first question in that subject
+// clicking on a menu item for a card subject selects the first question in that subject
 it('clicking on a question selects the card for that question', () => {
 
-  const {question, subject} = initialState.cards[1];
+  const {subject} = initialState.cards[1];
   const showState = {
     ...initialState,
     current: 0,
@@ -175,7 +175,7 @@ it('clicking on a question selects the card for that question', () => {
   const current = getByTestId('current');
   expect(current).toHaveTextContent('0');
 
-  const menuItem = getByText(question);
+  const menuItem = getByText(subject);
   fireEvent.click(menuItem);
 
   expect(current).toHaveTextContent('1');

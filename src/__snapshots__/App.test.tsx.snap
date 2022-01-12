@@ -77,6 +77,13 @@ exports[`Matches Snapshot 1`] = `
       What is a linked list?
     </div>
     <button
+      class="ui disabled button"
+      disabled=""
+      tabindex="-1"
+    >
+      Go Back
+    </button>
+    <button
       class="ui button"
     >
       Next or Skip

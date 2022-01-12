@@ -9,12 +9,13 @@ const Subject = ({
 }: {
   subject: string
 }) => {
-  const {cards, current, dispatch, show} = useContext(CardContext);
+  const {cards, current, dispatch} = useContext(CardContext);
 
   const currentCard = cards[current];
 
   // true if the subject is in the array show
-  const expanded = show.includes(subject);
+  // const expanded = show.includes(subject);  // ORIGINAL
+  const expanded = false; // do not expand subject cards
 
   // use filter to pull only the cards that have this subject 
   const subjectCards = cards

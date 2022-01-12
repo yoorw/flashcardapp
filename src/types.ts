@@ -23,6 +23,7 @@ export interface CardState {
 
 // the types of action that the reducer in CardContext will handle
 export enum CardActionTypes {
+  back = 'back',
   delete = 'delete',
   new = 'new',
   next = 'next',
@@ -34,6 +35,9 @@ export enum CardActionTypes {
 };
 
 export type CardAction = 
+  // moves to the previous card
+  | { type: CardActionTypes.back}
+  
   // deletes the card with matching question
   | { type: CardActionTypes.delete, question: string }
 

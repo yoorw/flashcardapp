@@ -3,8 +3,7 @@ import {render, cleanup, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import {CardContext, CardProvider, initialState, reducer} from './index';
 import { Card, CardAction, CardActionTypes, CardState } from '../../types';
-import { executionAsyncId } from 'async_hooks';
-import { Button, CardContent } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import * as localStorage from '../Save';
 import { getInitialState } from './services';
 
@@ -28,6 +27,7 @@ const CardConsumer = () => {
     <div data-testid='answer'>{answer}</div>
     <div data-testid='subject'>{subject}</div>
     <Button onClick={() => dispatch({type: CardActionTypes.next})}>Next</Button>
+    <Button onClick={() => dispatch({type: CardActionTypes.back})}>Back</Button>
   </div>
 };
 
@@ -50,113 +50,135 @@ describe('CardContext reducer', () => {
     expect(reducer(initialState, action)).toEqual(initialState);
   });
 
-  it('next increments current', () => {
-    // declare CardAction with type of 'next'
-    const nextAction: CardAction = {type: CardActionTypes.next};
+  describe('back button', () => {
+    afterEach(cleanup);
 
-    // create a new CardState with current === 0
-    const zeroState = {
-      ...initialState,
-      current: 0
-    };
+    it('should decrement current', () => {
+      // declare CardAction with type of 'back'
+      const backAction: CardAction = {type: CardActionTypes.back};
 
-    // pass initialState and nextAction to the reducer
-    expect(reducer(initialState, nextAction).current).toEqual(1);
+      // create a new CardState with current === 1
+      const firstState = {
+        ...initialState,
+        current: 1
+      };
+
+      // pass firstSTate and backAction to the reducer
+      expect(reducer(firstState, backAction).current).toEqual(0);
+    });
   });
 
-  it('adds a new card when next action is selected while current is lastIndex of cards and subject is Math', () => {
-    const mockMathCard: Card = {
-      answer: 'fakeMathAnswer',
-      question: 'fakeMathQuestion',
-      subject: 'Math'
-    };
+  describe('next button', () => {
+    afterEach(cleanup);
+
+    it('next increments current', () => {
+      // declare CardAction with type of 'next'
+      const nextAction: CardAction = {type: CardActionTypes.next};
   
-    // mock getAdditionCard
-    jest.mock('../../shared/utils.ts', () => ({
-      getAdditionCard: () => mockMathCard
-    }));
+      // create a new CardState with current === 0
+      const zeroState = {
+        ...initialState,
+        current: 0
+      };
   
-    const mockCards: Card[] = [
-      {
-        question: 'What is a linked list?',
-        subject: 'Linked List',
-        answer: `A linked list is a sequential list of nodes. 
-    The nodes hold data.
-    The nodes hold pointers that point ot other nodes containing data.`
-      },
-      {
-        question: 'What is a stack?',
-        subject: 'Stack',
-        answer: `A stack is a one ended linear data structure.
-    The stack models real world situations by having two primary operations: push and pop.
-    Push adds an element to the stack.
-    Pop pulls the top element off the stack.`
+      // pass initialState and nextAction to the reducer
+      expect(reducer(initialState, nextAction).current).toEqual(1);
+    });
+  
+    it('adds a new card when next action is selected while current is lastIndex of cards and subject is Math', () => {
+      const mockMathCard: Card = {
+        answer: 'fakeMathAnswer',
+        question: 'fakeMathQuestion',
+        subject: 'Math'
+      };
+    
+      // mock getAdditionCard
+      jest.mock('../../shared/utils.ts', () => ({
+        getAdditionCard: () => mockMathCard
+      }));
+    
+      const mockCards: Card[] = [
+        {
+          question: 'What is a linked list?',
+          subject: 'Linked List',
+          answer: `A linked list is a sequential list of nodes. 
+      The nodes hold data.
+      The nodes hold pointers that point ot other nodes containing data.`
         },
-        mockMathCard
-    ];
+        {
+          question: 'What is a stack?',
+          subject: 'Stack',
+          answer: `A stack is a one ended linear data structure.
+      The stack models real world situations by having two primary operations: push and pop.
+      Push adds an element to the stack.
+      Pop pulls the top element off the stack.`
+          },
+          mockMathCard
+      ];
+    
+      const {getIniitalState} = require('./services/index');
+      const mockInitialState = getInitialState();
+    
+      const nextAction: CardAction = {type: CardActionTypes.next};
   
-    const {getIniitalState} = require('./services/index');
-    const mockInitialState = getInitialState();
+      // get last valid index of cards
+      const lastIndex = mockInitialState.cards.length - 1;
   
-    const nextAction: CardAction = {type: CardActionTypes.next};
-
-    // get last valid index of cards
-    const lastIndex = mockInitialState.cards.length - 1;
-
-    // create a CardState object where current is the last valid index of cards
-    const lastState = {
-      ...initialState,
-      current: lastIndex
-    };
-
-    // pass lastState and nextAction to render
-    const nextCardState = reducer(lastState, nextAction);
-    expect(nextCardState.current).toEqual(3);
-    expect(nextCardState.cards.length).toEqual(4);
+      // create a CardState object where current is the last valid index of cards
+      const lastState = {
+        ...initialState,
+        current: lastIndex
+      };
+  
+      // pass lastState and nextAction to render
+      const nextCardState = reducer(lastState, nextAction);
+      expect(nextCardState.current).toEqual(3);
+      expect(nextCardState.cards.length).toEqual(4);
+    });
+  
+    it('next action when current is lastIndex of cards returns current === 0', () => {
+      const mockCards: Card[] = [
+        {
+          question: 'What is a linked list?',
+          subject: 'Linked List',
+          answer: `A linked list is a sequential list of nodes. 
+      The nodes hold data.
+      The nodes hold pointers that point ot other nodes containing data.`
+        },
+        {
+          question: 'What is a stack?',
+          subject: 'Stack',
+          answer: `A stack is a one ended linear data structure.
+      The stack models real world situations by having two primary operations: push and pop.
+      Push adds an element to the stack.
+      Pop pulls the top element off the stack.`
+          }
+      ];
+    
+      const nextAction: CardAction = {type: CardActionTypes.next};
+  
+      const mockState: CardState = {
+        cards: mockCards,
+        current: 0,
+        dispatch: (action: CardAction) => undefined,
+        show: []
+      }
+  
+      // get last valid index of cards
+      const lastIndex = mockState.cards.length - 1;
+  
+      // create a CardState object where current is the last valid index of cards
+      const lastState = {
+        ...mockState,
+        current: lastIndex
+      };
+  
+      // pass lastState and nextAction to render
+      expect(reducer(lastState, nextAction).current).toEqual(0);
+    });
   });
 
-  it('next action when current is lastIndex of cards returns current === 0', () => {
-    const mockCards: Card[] = [
-      {
-        question: 'What is a linked list?',
-        subject: 'Linked List',
-        answer: `A linked list is a sequential list of nodes. 
-    The nodes hold data.
-    The nodes hold pointers that point ot other nodes containing data.`
-      },
-      {
-        question: 'What is a stack?',
-        subject: 'Stack',
-        answer: `A stack is a one ended linear data structure.
-    The stack models real world situations by having two primary operations: push and pop.
-    Push adds an element to the stack.
-    Pop pulls the top element off the stack.`
-        }
-    ];
-  
-    const nextAction: CardAction = {type: CardActionTypes.next};
-
-    const mockState: CardState = {
-      cards: mockCards,
-      current: 0,
-      dispatch: (action: CardAction) => undefined,
-      show: []
-    }
-
-    // get last valid index of cards
-    const lastIndex = mockState.cards.length - 1;
-
-    // create a CardState object where current is the last valid index of cards
-    const lastState = {
-      ...mockState,
-      current: lastIndex
-    };
-
-    // pass lastState and nextAction to render
-    expect(reducer(lastState, nextAction).current).toEqual(0);
-  });
-
-  // save new card
+    // save new card
   it('save action with new question saves new card', () => {
     const answer = 'Example Answer';
     const question = 'Example Question';
@@ -488,15 +510,24 @@ describe('CardConsumer using CardContext', () => {
 });
 
 describe('CardConsumer', () => {
+  // create a new CardState with current === 0
+  const zeroState = {
+    ...initialState,
+    current: 0,
+    show: ['Stack']
+  };
+
+  // create CardState with current = 1
+  const firstState = {
+    ...initialState,
+    current: 1,
+    show: []
+  };
+
+  afterEach(cleanup);
+
   // dispatching next action from component increments value of current
   it('dispatching next action from component increments value of current', () => {
-    // create a new CardState with current === 0
-    const zeroState = {
-      ...initialState,
-      current: 0,
-      show: ['Stack']
-    };
-
     const {getByTestId, getByText} = renderProvider(zeroState);
 
     // get currentDiv with testId
@@ -509,7 +540,24 @@ describe('CardConsumer', () => {
     // click the next button
     fireEvent.click(nextButton);
 
-    // expect(currentDiv).toHaveTextContent('1');
+    expect(currentDiv).toHaveTextContent('1');
+  });
+
+  // dispatching back action from component decrements value of current
+  it('dispatching back action from component decrements value of current', () => {
+    const {getByTestId, getByText} = renderProvider(firstState);
+
+    // get currentDiv with tesetId
+    const currentDiv = getByTestId(/current/i);
+    // testContent should be 1
+    expect(currentDiv).toHaveTextContent('1');
+
+    // get backButton by text - users find buttons with text
+    const backButton = getByText(/back/i);
+    // click the back button
+    fireEvent.click(backButton);
+
+    expect(currentDiv).toHaveTextContent('0');
   });
 });
 
